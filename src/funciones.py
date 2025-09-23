@@ -14,3 +14,13 @@ def mejor_equipo_de_ronda(ronda): #ronda es un diccionario
     mejor_equipo = max(puntajes, key=puntajes.get) #me quedo con la clave del diccionario que tiene el valor mas alto
     return mejor_equipo
 
+def generar_tabla_de_resultados(evaluaciones):
+    resultados = {}   
+    for ronda in evaluaciones:
+        for equipo, stats in ronda.items():
+            puntaje = calcular_puntaje(stats)
+            resultados[equipo] = resultados.get(equipo, 0) + puntaje 
+    ranking = sorted(resultados.items(), key=lambda x: x[1], reverse=True)  
+    for equipo, puntaje in ranking:
+        print(f"{equipo}: {puntaje} puntos") 
+    return ranking  #retornamos el ranking, que es una lista de tuplas (equipo, puntaje)
