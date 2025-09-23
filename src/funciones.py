@@ -14,6 +14,18 @@ def mejor_equipo_de_ronda(ronda): #ronda es un diccionario
     mejor_equipo = max(puntajes, key=puntajes.get) #me quedo con la clave del diccionario que tiene el valor mas alto
     return mejor_equipo
 
+def mostrar_mejor_equipo_por_ronda(evaluaciones):
+    print("MEJOR EQUIPO POR RONDA")
+    print("=" * 50)
+
+    for i, ronda in enumerate(evaluaciones,0):
+      mejor_equipo = mejor_equipo_de_ronda(ronda) #llamo a la funcion que me devuelve el mejor equipo de la ronda
+      puntaje_mejor = calcular_puntaje(ronda[mejor_equipo])
+      print(f"\nRonda {i+1}: {mejor_equipo} - {puntaje_mejor} puntos")
+            
+      
+    
+
 def generar_tabla_de_resultados(evaluaciones):
     resultados = {}   
     for ronda in evaluaciones:
