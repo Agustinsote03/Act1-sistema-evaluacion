@@ -3,14 +3,18 @@ def calcular_puntaje(stats): #stats es un diccionario, cuya clave es el nombre d
     presentacion = 1
     puntos = innovacion * stats['innovacion'] + presentacion * stats['presentacion']
     if stats['errores']:
-     puntos = puntos - 1
+        puntos = puntos - 1
     return puntos
 
+def puntajes_con_map(ronda):
+    """
+    Devuelve un diccionario {equipo: puntaje} usando map()
+    """
+    return dict(map(lambda item: (item[0], calcular_puntaje(item[1])), ronda.items()))
+
 def mejor_equipo_de_ronda(ronda): #ronda es un diccionario
-    puntajes = {} #diccionario vacio
-    for equipo, stats in ronda.items(): #recorro el diccionario, y voy tomando la clave(equipo) y el valor(stats)
-        puntuacion = calcular_puntaje(stats) #Guardo el puntaje en la variable
-        puntajes[equipo] = puntuacion #la clave es el equipo y el valor es la puntuacion
+    # Uso de la función auxiliar con map()
+    puntajes = puntajes_con_map(ronda)
     mejor_equipo = max(puntajes, key=puntajes.get) #me quedo con la clave del diccionario que tiene el valor mas alto
     return mejor_equipo
 
@@ -28,28 +32,28 @@ def procesar_evaluaciones_completo(evaluaciones):
     print("=" * 50)
     
     for numero_ronda, ronda in enumerate(evaluaciones, 0):
-        puntajes_ronda = {}
+        puntajes_ronda = puntajes_con_map(ronda) #Uso de map() para calcular todos los puntajes
         mejor_equipo_ronda = "none"
         mejor_puntaje_ronda = -1
         
         print(f"RONDA {numero_ronda + 1}")
         print("=" * 30)
         
-        #Se calculan puntajes de la ronda actual
-        for equipo, stats in ronda.items():
-            puntaje = calcular_puntaje(stats)
-            puntajes_ronda[equipo] = puntaje
+        #Se recorren los puntajes calculados
+        for equipo, puntaje in puntajes_ronda.items():
             puntajes_acumulados[equipo] += puntaje
+            
             #Se acumulan las estadisticas
-            estadisticas[equipo]['innovacion_total'] += stats['innovacion']
-            estadisticas[equipo]['presentacion_total'] += stats['presentacion']
+            estadisticas[equipo]['innovacion_total'] += ronda[equipo]['innovacion']
+            estadisticas[equipo]['presentacion_total'] += ronda[equipo]['presentacion']
             estadisticas[equipo]['puntos_totales'] += puntaje
-            if stats['errores']: 
+            if ronda[equipo]['errores']: 
                 estadisticas[equipo]['errores_total'] += 1
             
             if puntaje > mejor_puntaje_ronda:
                 mejor_puntaje_ronda = puntaje
                 mejor_equipo_ronda = equipo
+                
         estadisticas[mejor_equipo_ronda]['veces_mejor'] += 1
         print(f"MEJOR EQUIPO DE LA RONDA: {mejor_equipo_ronda} ({mejor_puntaje_ronda} puntos)")
         print("\nRANKING ACTUALIZADO:")
@@ -81,6 +85,7 @@ def mostrar_tabla_de_resultados(puntajes_acumulados):
     print("=" * 50)
     for equipo, puntaje in ranking:
         print(f"{equipo}: {puntaje} puntos")
+
 
 
     
